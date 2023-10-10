@@ -32,7 +32,7 @@ def get_data_format(data: dict, t): # t in ('free', 'used', 'total')
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
     data = get_balance()
-    print(data)
+    # print(data)
     my_balance = get_types_balance(data)
     print('Мой Баланс: ..............................')
     for i in my_balance:
