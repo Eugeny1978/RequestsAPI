@@ -18,6 +18,7 @@ def get_types_balance(data: json):
     data_total = get_data_format(data, 'total')
     return (data_free, data_used, data_total)
 
+# Получаю Баланс без пустой информации
 def get_data_format(data: dict, t): # t in ('free', 'used', 'total')
     data = data[t]
     data_format = {}
@@ -33,10 +34,10 @@ def main():
     data = get_balance()
     print(data)
     my_balance = get_types_balance(data)
-    print('Мой Баланс: .............................')
+    print('Мой Баланс: ..............................')
     for i in my_balance:
         print(i)
-    print('.........................................')
+    print('..........................................')
 
 if __name__ == '__main__':
     main()
