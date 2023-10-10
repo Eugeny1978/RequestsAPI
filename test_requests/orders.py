@@ -22,7 +22,7 @@ def create_order(pairId, side, type, amount, price):
     responce = requests.post(url=end_point, auth=basic_auth, data=body) # headers=headers, headers = {'user-agent': 'my-app/0.0.1'}
     data = responce.json()
     # name_file = f'create_order_{pairId[0]}_{side[0]}_{type[0]}_{amount[0]}_{price}'
-    name_file = f'create_order_{data["result"]["pair"]}_{side}_{type}_{amount}_{price}'
+    name_file = f'create_order_{data["result"]["pair"]}_{side}_{type}_{amount}_{price}_{data["result"]["id"]}'
     write_json_file(data, name_file)
 
     if data['ok']:
