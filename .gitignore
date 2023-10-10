@@ -1,2 +1,3 @@
 /.idea/
 /venv/
+/test_requests/api_constants.py
