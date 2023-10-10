@@ -14,7 +14,9 @@ def get_pair_info(pair): # eth_usdt
 
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
-    pair = 'farms_usdt'
+    # pair = 'farms_usdt'
+    # pair = 'eth_usdt'
+    pair = 'del_usdt'
     print(get_pair_info(pair))
 
 if __name__ == '__main__':
