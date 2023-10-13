@@ -37,7 +37,7 @@ def main():
 
     body_order = {'pairId': '24', # del_usdt
                 'side': "buy",
-                'type': "conditional",
+                'type': "limit",
                 'amount': '1000',
                 'price': '0.017'
                 #"stopPrice": "0.0175"

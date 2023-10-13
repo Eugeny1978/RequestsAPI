@@ -20,7 +20,7 @@ def get_orderbooks(pair='del_usdt'):
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
     get_orderbooks()
-    get_orderbooks('eth_usdt')
+    get_orderbooks('del_usdt')
 
 
 if __name__ == '__main__':

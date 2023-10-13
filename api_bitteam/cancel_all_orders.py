@@ -38,12 +38,12 @@ def main():
                    'price': '0.04'
                    }
 
-    create_order(body_order1)
-    create_order(body_order1)
-    create_order(body_order1)
-    sleep(30)
-    cancel_all_orders(44)
-    # cancel_all_orders()
+    # create_order(body_order1)
+    # create_order(body_order1)
+    # create_order(body_order1)
+    # sleep(30)
+    # cancel_all_orders(44)
+    cancel_all_orders()
 
 if __name__ == '__main__':
     main()
