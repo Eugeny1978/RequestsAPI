@@ -1,8 +1,8 @@
-import requests                         # библиотека для создания и обработки запросов
-import json                             # библиотека для обработки данных json
-from auth import basic_auth             # Аутентификация
-from constans import BASE_URL           # Базовый URL
-from common.methods import write_data   # запись информации в файлы
+import requests                             # библиотека для создания и обработки запросов
+import json                                 # библиотека для обработки данных json
+from auth import basic_auth                 # Аутентификация
+from constants import BASE_URL              # Базовый URL, Папка Логов
+from common.methods import write_data       # запись информации в файлы
 
 def get_balance():
     """

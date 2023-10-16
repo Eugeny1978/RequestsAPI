@@ -1,7 +1,7 @@
-import requests                         # библиотека для создания и обработки запросов
-from auth import basic_auth             # Аутентификация
-from constans import BASE_URL           # Базовый URL
-from common.methods import write_data   # запись информации в файлы
+import requests                             # библиотека для создания и обработки запросов
+from auth import basic_auth                 # Аутентификация
+from constants import BASE_URL              # Базовый URL, Папка Логов
+from common.methods import write_data       # запись информации в файлы
 
 def get_trades_of_user(limit=10, offset=0, order='', pairId=0):
     """
@@ -10,25 +10,10 @@ def get_trades_of_user(limit=10, offset=0, order='', pairId=0):
     ccxt/tradesOfUser?limit=10&offset=0&order=<string>&pairId=<integer>
     """
     # Необязательные Параметры
-    if limit == 10:
-        url_limit = ''
-    else:
-        url_limit = f'limit={limit}'
-
-    if offset == 0:
-        url_offset = ''
-    else:
-        url_offset = f'&offset={offset}'
-
-    if order == '':
-        url_order = ''
-    else:
-        url_order = f'&order={order}'
-
-    if pairId == 0:
-        url_pairId = ''
-    else:
-        url_pairId = f'&pairId={pairId}'
+    url_limit = '' if limit == 10 else f'limit={limit}'
+    url_offset = '' if offset == 0 else f'&offset={offset}'
+    url_order = '' if order == '' else f'&order={order}'
+    url_pairId = '' if pairId == 0 else f'&pairId={pairId}'
 
     end_point = f'{BASE_URL}/ccxt/tradesOfUser?' + url_limit + url_offset + url_order + url_pairId
     responce = requests.get(url=end_point, auth=basic_auth)

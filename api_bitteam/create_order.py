@@ -1,7 +1,7 @@
-import requests                         # библиотека для создания и обработки запросов
-from auth import basic_auth             # Аутентификация
-from constans import BASE_URL           # Базовый URL
-from common.methods import write_data   # запись информации в файлы
+import requests                             # библиотека для создания и обработки запросов
+from auth import basic_auth                 # Аутентификация
+from constants import BASE_URL              # Базовый URL, Папка Логов
+from common.methods import write_data       # запись информации в файлы
 
 def create_order(body):
     """
@@ -38,8 +38,8 @@ def main():
     body_order = {'pairId': '24', # del_usdt
                 'side': "buy",
                 'type': "limit",
-                'amount': '1000',
-                'price': '0.017'
+                'amount': '500',
+                'price': '0.015'
                 #"stopPrice": "0.0175"
                 #'slippage': '100'
                 }

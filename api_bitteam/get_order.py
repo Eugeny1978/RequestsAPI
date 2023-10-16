@@ -1,9 +1,9 @@
-import requests                         # библиотека для создания и обработки запросов
-from auth import basic_auth             # Аутентификация
-from constans import BASE_URL           # Базовый URL
-from common.methods import write_data   # запись информации в файлы
-from create_order import create_order   # Для отработки предварительно создам ордер
-from time import sleep                  # пауза
+import requests                             # библиотека для создания и обработки запросов
+from auth import basic_auth                 # Аутентификация
+from constants import BASE_URL              # Базовый URL, Папка Логов
+from common.methods import write_data       # запись информации в файлы
+from create_order import create_order       # Для отработки предварительно создам ордер
+from time import sleep                      # пауза
 
 def get_order(order_id):
     """
@@ -20,8 +20,8 @@ def main():
     body_order = {'pairId': '24',  # del_usdt
                   'side': "buy",
                   'type': "limit",
-                  'amount': '1000',
-                  'price': '0.017'
+                  'amount': '450',
+                  'price': '0.015'
                   }
     data = create_order(body_order)
     if data['ok']:

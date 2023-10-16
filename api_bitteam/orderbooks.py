@@ -1,7 +1,7 @@
-import requests                         # библиотека для создания и обработки запросов
-from constans import BASE_URL           # Базовый URL
-from common.methods import write_data   # запись информации в файлы
-from datetime import datetime           # для момента в который снимаем слепок стакана
+import requests                             # библиотека для создания и обработки запросов
+from constants import BASE_URL              # Базовый URL, Папка Логов
+from common.methods import write_data       # запись информации в файлы
+from datetime import datetime               # для момента в который снимаем слепок стакана
 
 
 def get_orderbooks(pair='del_usdt'):
