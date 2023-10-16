@@ -1,7 +1,7 @@
 import requests                         # библиотека для создания и обработки запросов
 from auth import basic_auth             # Аутентификация
 from constans import BASE_URL           # Базовый URL
-from common_methods import write_data   # запись информации в файлы
+from common.methods import write_data   # запись информации в файлы
 
 def get_trades_of_user(limit=10, offset=0, order='', pairId=0):
     """

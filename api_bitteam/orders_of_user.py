@@ -1,7 +1,7 @@
 import requests                         # библиотека для создания и обработки запросов
 from auth import basic_auth             # Аутентификация
 from constans import BASE_URL           # Базовый URL
-from common_methods import write_data   # запись информации в файлы
+from common.methods import write_data   # запись информации в файлы
 from create_order import create_order   # Предварительно создам ордера
 def get_orders_of_user(type='active', limit=10, offset=0, order='', where=''):
     """
