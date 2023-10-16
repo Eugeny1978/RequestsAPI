@@ -1,4 +1,4 @@
 /.idea/
 /venv/
-/test_requests/api_constants.py
+/tests/api_constants.py
 /api_bitteam/api_keys.py
