@@ -1,10 +1,10 @@
-import requests                             # библиотека для создания и обработки запросов
-from auth import basic_auth                 # Аутентификация
-from constants import BASE_URL              # Базовый URL, Папка Логов
-from common.methods import write_data       # запись информации в файлы
-from create_order import create_order       # Предварительно создам ордера
+import requests                                     # Библиотека для создания и обработки запросов
+from api_bitteam.auth import basic_auth             # Аутентификация
+from api_bitteam.constants import BASE_URL          # Базовый URL
+from api_bitteam.create_order import create_order   # Предварительно создам ордера
+from common.methods import write_data               # Запись информации в файлы
 
-def get_orders_of_user(type='active', limit=10, offset=0, order='', where=''):
+def get_orders_of_user(type='active', limit=10, offset=0, order='', where='', dump_json=False):
     """
     type= 'history', 'active', 'closed', 'cancelled', 'all'
     offset=х - смещение: не покажет первые Х ордеров
@@ -21,7 +21,7 @@ def get_orders_of_user(type='active', limit=10, offset=0, order='', where=''):
 
     data = responce.json()
     name_file = f'orders_of_user'
-    write_data(data, name_file)
+    write_data(data, name_file, dump_json)
 
     return data
 
@@ -37,10 +37,10 @@ def main():
                    'type': "limit",
                    'amount': '300',
                    'price': '0.040' }
-    create_order(body_order1)
-    create_order(body_order2)
+    create_order(body_order1, True)
+    create_order(body_order2, True)
 
-    data = get_orders_of_user()
+    data = get_orders_of_user(dump_json=True)
     if data['ok']:
         print('Получил список Ордеров (см. файл json')
     else:

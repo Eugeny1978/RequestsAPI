@@ -1,9 +1,9 @@
-import requests                             # библиотека для создания и обработки запросов
-from auth import basic_auth                 # Аутентификация
-from constants import BASE_URL              # Базовый URL, Папка Логов
-from common.methods import write_data       # запись информации в файлы
+import requests                             # Библиотека для создания и обработки запросов
+from api_bitteam.auth import basic_auth     # Аутентификация
+from api_bitteam.constants import BASE_URL  # Базовый URL
+from common.methods import write_data       # Запись информации в файлы
 
-def get_trades_of_user(limit=10, offset=0, order='', pairId=0):
+def get_trades_of_user(limit=10, offset=0, order='', pairId=0, dump_json=False):
     """
     offset=х - смещение: не покажет первые Х сделок
     pairId=0 - все пары # 24 - del_usdt
@@ -20,7 +20,7 @@ def get_trades_of_user(limit=10, offset=0, order='', pairId=0):
 
     data = responce.json()
     name_file = f'trades_of_user'
-    write_data(data, name_file)
+    write_data(data, name_file, dump_json)
 
     return data
 
@@ -28,7 +28,7 @@ def get_trades_of_user(limit=10, offset=0, order='', pairId=0):
 def main():
     # data = get_trades_of_user(limit=20)
     # data = get_trades_of_user(limit=5, offset=3, pairId=24)
-    data = get_trades_of_user()
+    data = get_trades_of_user(dump_json=True)
     if data['ok']:
         print('Получил список Сделок (см. файл json')
     else:

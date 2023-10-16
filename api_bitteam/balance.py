@@ -1,10 +1,10 @@
-import requests                             # библиотека для создания и обработки запросов
-import json                                 # библиотека для обработки данных json
-from auth import basic_auth                 # Аутентификация
-from constants import BASE_URL              # Базовый URL, Папка Логов
+import requests                             # Библиотека для создания и обработки запросов
+import json                                 # Обработка данных json
+from api_bitteam.auth import basic_auth     # Аутентификация
+from api_bitteam.constants import BASE_URL  # Базовый URL
 from common.methods import write_data       # запись информации в файлы
 
-def get_balance():
+def get_balance(dump_json=False):
     """
     Баланс по счету
     :return: Данные Запроса в json Словаре
@@ -13,7 +13,7 @@ def get_balance():
     responce = requests.get(url=end_point, auth=basic_auth)
     data = responce.json()
     name_file = 'get_balance'
-    write_data(data, name_file)
+    write_data(data, name_file, dump_json)
     return data
 
 # Получаю Баланс без пустой информации (Прикладной Метод)
@@ -36,7 +36,7 @@ def get_types_balance(data: json):
 
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
-    data = get_balance()
+    data = get_balance(dump_json=True)
     # print(data)
     my_balance = get_types_balance(data)
     print('Мой Баланс: ..............................')

@@ -1,9 +1,9 @@
-import requests                             # библиотека для создания и обработки запросов
-from auth import basic_auth                 # Аутентификация
-from constants import BASE_URL              # Базовый URL, Папка Логов
-from common.methods import write_data       # запись информации в файлы
+import requests                             # Библиотека для создания и обработки запросов
+from api_bitteam.auth import basic_auth     # Аутентификация
+from api_bitteam.constants import BASE_URL  # Базовый URL
+from common.methods import write_data       # Запись информации в файлы
 
-def create_order(body):
+def create_order(body, dump_json=False):
     """
     body = {'pairId':   str, #  '44' farms_usdt, '24' del_usdt
             'side':     str, # "buy", "sell"
@@ -18,7 +18,7 @@ def create_order(body):
     data = responce.json()
     try:
         name_file = f'create_order_{data["result"]["pair"]}_{body["side"]}_{body["type"]}_{body["amount"]}_{body["price"]}_{data["result"]["id"]}'
-        write_data(data, name_file)
+        write_data(data, name_file, dump_json)
     except Exception as error:
         print(error)
 
@@ -43,7 +43,7 @@ def main():
                 #"stopPrice": "0.0175"
                 #'slippage': '100'
                 }
-    data = create_order(body_order)
+    data = create_order(body_order, True)
 
     if data['ok']:
         print(f'Ордер Создан. ID: {data["result"]["id"]}')

@@ -1,9 +1,12 @@
 import requests                         # библиотека для создания и обработки запросов
 from common.methods import write_data   # запись информации в файлы
 from datetime import datetime           # для момента в который снимаем информацию
-from constants import BASE_URL          # Базовый URL
+from api_xt.constants import BASE_URL          # Базовый URL
 
-def get_kline(symbol='del_usdt', interval='1d', limit=100, startTime=0, endTime=0):
+
+# BASE_URL = 'https://sapi.xt.com'
+
+def get_kline(symbol='del_usdt', interval='1d', limit=100, startTime=0, endTime=0, dump_json=False):
     """
     symbol - обязательный
     interval - обязательный - [1m;3m;5m;15m;30m;1h;2h;4h;6h;8h;12h;1d;3d;1w;1M]
@@ -22,13 +25,13 @@ def get_kline(symbol='del_usdt', interval='1d', limit=100, startTime=0, endTime=
     responce = requests.get(url=end_point)
     data = responce.json()
     name_file = f'XT_kline_{symbol}_{interval}_{limit}_{dt_now}'
-    write_data(data, name_file)
+    write_data(data, name_file, dump_json)
     return data
 
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
     # data = get_kline(symbol='del_usdt', interval='1d', limit=5)
-    data = get_kline(limit=5)
+    data = get_kline(limit=5, dump_json=True)
 
 if __name__ == '__main__':
     main()

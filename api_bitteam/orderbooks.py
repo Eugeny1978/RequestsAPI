@@ -1,10 +1,9 @@
-import requests                             # библиотека для создания и обработки запросов
-from constants import BASE_URL              # Базовый URL, Папка Логов
-from common.methods import write_data       # запись информации в файлы
-from datetime import datetime               # для момента в который снимаем слепок стакана
+import requests                             # Библиотека для создания и обработки запросов
+from datetime import datetime               # Для момента в который снимаем слепок стакана
+from api_bitteam.constants import BASE_URL  # Базовый URL
+from common.methods import write_data       # Запись информации в файлы
 
-
-def get_orderbooks(pair='del_usdt'):
+def get_orderbooks(pair='del_usdt', dump_json=False):
     """
     Стакан Цен по выбранной Паре
     Также Стакан есть и в запросе "pair". Но там он обрезан лимитом в 50 слотов
@@ -14,13 +13,13 @@ def get_orderbooks(pair='del_usdt'):
     responce = requests.get(url=end_point)
     data = responce.json()
     name_file = f'orderbooks_{pair}_{dt_now}'
-    write_data(data, name_file)
+    write_data(data, name_file, dump_json)
     return data
 
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
     # get_orderbooks()
-    get_orderbooks('del_usdt')
+    get_orderbooks('del_usdt', True)
 
 
 if __name__ == '__main__':
