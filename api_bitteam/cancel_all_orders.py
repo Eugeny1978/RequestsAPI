@@ -43,8 +43,8 @@ def main():
     # create_order(body_order1)
     # create_order(body_order1)
     # sleep(30)
-    # cancel_all_orders(44)
-    cancel_all_orders(dump_json=True)
+    cancel_all_orders(24, True)
+    # cancel_all_orders(dump_json=True)
 
 if __name__ == '__main__':
     main()

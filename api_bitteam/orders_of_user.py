@@ -27,18 +27,18 @@ def get_orders_of_user(type='active', limit=10, offset=0, order='', where='', du
 
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
-    body_order1 = {'pairId': '24',  # del_usdt
-                  'side': "buy",
-                  'type': "limit",
-                  'amount': '600',
-                  'price': '0.0160' }
-    body_order2 = {'pairId': '44',  # farms_usdt
-                   'side': "buy",
-                   'type': "limit",
-                   'amount': '300',
-                   'price': '0.040' }
-    create_order(body_order1, True)
-    create_order(body_order2, True)
+    # body_order1 = {'pairId': '24',  # del_usdt
+    #               'side': "buy",
+    #               'type': "limit",
+    #               'amount': '600',
+    #               'price': '0.0160' }
+    # body_order2 = {'pairId': '44',  # farms_usdt
+    #                'side': "buy",
+    #                'type': "limit",
+    #                'amount': '300',
+    #                'price': '0.040' }
+    # create_order(body_order1, True)
+    # create_order(body_order2, True)
 
     data = get_orders_of_user(dump_json=True)
     if data['ok']:

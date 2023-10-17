@@ -15,7 +15,7 @@ pair = columnA.selectbox('Торгумая ПАРА:', options=pairs)
 min_spred = columnA.number_input('Минимальный Спред', min_value=0)
 # volume = st.sidebar.number_input('Используемый Объем', min_value=0, max_value=100)
 # stop_factor = st.sidebar.number_input('Стоп-фактор', min_value=0, max_value=100)
-volume = columnB.slider('Тогруемый Объем (% от Средств на депозите):', min_value=0, max_value=100, value=50, step=5)
+section_depo = columnB.slider('Тогруемый Объем (% от Средств на депозите):', min_value=0, max_value=100, value=50, step=5)
 stop_factor = columnB.slider('Стоп-фактор (% от используемого Объема):', min_value=0, max_value=100, value=20)
 
 result_script = '+2.74%'

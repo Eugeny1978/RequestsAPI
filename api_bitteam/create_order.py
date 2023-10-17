@@ -27,19 +27,19 @@ def create_order(body, dump_json=False):
 
 # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
 def main():
-    # body_order = {'pairId': '24', # del_usdt
-    #             'side': "buy",
+    # body_order = {'pairId': '44', # farms_usdt. Необходимо продать 1996 шт. 2023/10/17 Торгов нет Ордера не выводятся в стакан
+    #             'side': "sell",
     #             'type': "limit",
-    #             'amount': '1000',
-    #             'price': '0.017'
+    #             'amount': '1996',
+    #             'price': '0.53334'
     #             }
-    # data = create_order(body_order)
+    # data = create_order(body_order, True)
 
     body_order = {'pairId': '24', # del_usdt
-                'side': "buy",
+                'side': "sell",
                 'type': "limit",
-                'amount': '500',
-                'price': '0.015'
+                'amount': '6.123456', # '6.12345678' 8 знаков после точки
+                'price': '0.017991'   # '0.017991' 6 знаков после точки
                 #"stopPrice": "0.0175"
                 #'slippage': '100'
                 }
