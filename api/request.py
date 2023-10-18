@@ -8,8 +8,9 @@ from datetime import datetime               # Для момента в кото�
 class Request:
     def __init__(self):
         self.status = 0
-        self.date = {}
+        self.data = {}
         self.file_name = ''
+        self.auth = ''
 
     # Момент времени Получения данных из Запроса
     def get_moment_date(self):
@@ -30,7 +31,7 @@ class Request:
         path_to_file = (cwd / relative_path).resolve()
 
         # Преобразую Словарь dict() в Объект формата JSON
-        data_json = jsonpickle.encode(self.date, indent=4,make_refs=False)
+        data_json = jsonpickle.encode(self.data, indent=4,make_refs=False)
 
         try:
             with open(path_to_file, 'w') as file:
