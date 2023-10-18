@@ -5,6 +5,7 @@ from api_xt.constants import BASE_URL       # Базовый URL, Папка л�
 
 def get_depth(symbol='del_usdt', dump_json=False):
     """
+    Стакан Цен по выбранной Паре
     """
     point = '/v4/public/depth'
     end_point = f'{BASE_URL}{point}?symbol={symbol}&limit=500'
