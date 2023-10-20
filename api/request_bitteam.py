@@ -232,7 +232,7 @@ def main():
 
     # req.get_balance()
 
-    # req.get_balance_compact()
+    req.get_balance_compact()
 
     # body_order = {'pairId': '24',  # del_usdt
     #               'side': "sell",
@@ -253,12 +253,12 @@ def main():
     #     req.get_orders_of_user(type=ot)
     #     req.write_data()
 
-    req.get_trades_of_user(limit=100)
+    # req.get_trades_of_user(limit=100)
 
 # Контроль Результатов -------------------------------------------------
 
     # print(req.__dict__)  # Вывод на экран Атрибутов Экземляра Класса
-    req.write_data()  # Запись Данных в файл
+    # req.write_data()  # Запись Данных в файл
 
 
 if __name__ == '__main__':

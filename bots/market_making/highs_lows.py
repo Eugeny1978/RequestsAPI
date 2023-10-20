@@ -1,9 +1,9 @@
 import pandas as pd                             # Операции для Таблицы Данных
 from api_xt.kline import get_kline              # API Запрос Исторические Свечи
-from bots.market_making.config import SYMBOL    # Торгуемая Пара
+from bots.market_making.config import PAIR    # Торгуемая Пара
 
 def get_high_low_interval(interval, dump_json=False):
-    data = get_kline(symbol=SYMBOL, limit=2, interval=interval, dump_json=dump_json)
+    data = get_kline(symbol=PAIR, limit=2, interval=interval, dump_json=dump_json)
     high = max(float(data['result'][1]['h']), float(data['result'][0]['h']))
     low = min(float(data['result'][1]['l']), float(data['result'][0]['l']))
     return (high, low)
