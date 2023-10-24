@@ -51,6 +51,44 @@ class RequestBitTeam(Request):
         # # Мин. размер Лота относительно Доллара US. str()
         # print(f"Мин. Размер Позы в USD: {self.date['result']['pair']['settings']['limit_usd']}")
 
+    def info_pairs(self):
+        """
+        Метод для получения информации обо всех торговых парах
+        """
+        end_point = f'{BASE_URL}/pairs'
+
+        dt_now = self.get_moment_date()
+        responce = requests.get(url=end_point)
+
+        self.status = responce.status_code
+        self.data = responce.json()
+        self.file_name = f'BitTeam_all_pairs_{dt_now}'
+
+    def post_pairs_sql(self):
+        """
+        Получает данные по Всем парам и записывает их в базу Данных SQL.
+        id, name, baseStep, quoteStep
+        Перед записью существующие записи удаляет.
+        """
+        self.info_pairs()
+
+        with sq.connect(PATH) as connect_db:
+            # connect_db.row_factory = sq.Row  # Если хотим строки записей в виде dict {}. По умолчанию - кортежи turple ()
+            cursor_db = connect_db.cursor()
+
+            cursor_db.execute("""CREATE TABLE IF NOT EXISTS pairs
+                (id INTEGER PRIMARY KEY, name TEXT, baseStep INTEGER, quoteStep INTEGER)""")
+
+            cursor_db.execute("""DELETE FROM pairs""")
+
+            for pair in self.data['result']['pairs']:
+                cursor_db.execute("""
+                    INSERT INTO pairs (id, name, baseStep, quoteStep) 
+                    VALUES (:Id, :Name, :BaseStep, :QuoteStep)
+                     """, {'Id': pair['id'], 'Name': pair['name'], 'BaseStep': pair['baseStep'],
+                           'QuoteStep': pair['quoteStep']})
+
+
 
 # --- ПРИВАТНЫЕ ЗАПРОСЫ. Требуется Предварительная Авторизация -----------------------------
 
@@ -242,7 +280,10 @@ def main():
 
     # req.get_pair()         # Информация по Торгуемой Паре
 
-    # Приватные Запросы ------------------------------------------
+    # req.info_pairs() # Информация по Всем Торгуемым Парам
+    # req.post_pairs_sql() # Отправить Информацию по Всем Торгуемым Парам в БД
+
+    # Приватные Запросы -----------------------------------------
     req.authorization(ACCOUNT)
     # req.get_balance_compact()
 
