@@ -65,10 +65,11 @@ class MM_5Levels(RequestXT, RequestBitTeam):
         print(self.levels)
     def create_my_orders(self):
 
-        # Заглушка предварительно удаляю Вcе Ордера по Данной Паре
         self.get_pair(pair=PAIR)
         pairId = self.data['result']['pair']['id']
-        self.cancel_all_orders(pairId=pairId)
+
+        # Заглушка предварительно удаляю Вcе Ордера по Данной Паре
+        # self.cancel_all_orders(pairId=pairId)
 
         # BUY ORDERS
         for i in self.levels.index:
@@ -97,6 +98,12 @@ def main():
     while STATUS_RUN:
         strategy = MM_5Levels()         # Создаю Объект Стратегию
         strategy.authorization(ACCOUNT) # Авторизируюсь
+
+        # Перед расчетом Объемов Удаляю Все Активные Ордера по этой паре
+        strategy.get_pair(pair=PAIR)
+        pairId = strategy.data['result']['pair']['id']
+        strategy.cancel_all_orders(pairId=pairId)
+
         strategy.get_levels()           # Определяю Уровни на которых буду ставить Ордера на Пару
         strategy.get_amounts()          # Определяю Объемы (Размеры) Ордеров по Паре
         strategy.create_my_orders()     # Выставляю Ордера (предварительно удаляю все Активные Ордера по Паре)

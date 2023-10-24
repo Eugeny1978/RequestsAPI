@@ -1,10 +1,9 @@
-import api_bitteam.api_keys as keys
-
 PAIR = 'del_usdt' # Торгуемая Пара
 INTERVALS = ['4h', '12h', '1d', '3d', '1w']
 SECTION_DEPO = 20 # Доля Торгуемого Капитала от Общего Депо в %
 ACCOUNT = {'name': 'Luchnik78', 'exchange': 'Bitteam'}
 RATE_AMOUNT = 1.5 # Коэфициент нарастания Объема
+
 STEP_PRICE = 6  # ШАГ Цен. Округлять до Знаков после точки
 STEP_AMOUNT = 6 # ШАГ Объемов. Округлять до Знаков после точки
 STATUS_RUN = True # Статус Запущен или остановлен Скрипт
