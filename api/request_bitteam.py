@@ -1,12 +1,14 @@
 import requests                                 # Библиотека для создания и обработки запросов
 from api.request import Request                 # Базовый Класс
 import pandas as pd                             # Преобразовать Словари в Таблицы
-from api_bitteam.api_keys import API, PRIVATE   # Временно
+import sqlite3 as sq                            # Библиотека  Работа с БД
+from data_bases.path_to_base import PATH        # Путь к БД
 
 # responce = requests.post(url, auth, data, headers=headers) # Возможно необходимо прописать Заголовок headers = {'user-agent': 'my-app/0.0.1'}
 
 BASE_URL = 'https://bit.team/trade/api'
-account = {'name': 'Luchnik78', 'public_key': API, 'secret_key': PRIVATE}
+# account = {'name': 'Luchnik78', 'public_key': API, 'secret_key': PRIVATE}
+ACCOUNT = {'name': 'Luchnik78', 'exchange': 'Bitteam'}
 
 class RequestBitTeam(Request):
 
@@ -52,11 +54,22 @@ class RequestBitTeam(Request):
 
 # --- ПРИВАТНЫЕ ЗАПРОСЫ. Требуется Предварительная Авторизация -----------------------------
 
-    def authorization(self, account: dict):
 
-        public_key = account['public_key']
-        secret_key = account['secret_key']
-        basic_auth = requests.auth.HTTPBasicAuth(public_key, secret_key)
+    def get_api_keys(self, account: dict):
+        with sq.connect(PATH) as connect_db:
+            connect_db.row_factory = sq.Row  # Если хотим строки записей в виде dict {}. По умолчанию - кортежи turple ()
+            cursor_db = connect_db.cursor()
+            cursor_db.execute("""SELECT name, public_key, secret_key FROM trade_api
+                              WHERE name LIKE :Name and exchange LIKE :Exchange
+                              """, {'Name': account['name'], 'Exchange': account['exchange']})
+            for select in cursor_db:
+                self.account_name = select['name']
+                self.public_key = select['public_key']
+                self.secret_key = select['secret_key']
+
+    def authorization(self, account):
+        self.get_api_keys(account)
+        basic_auth = requests.auth.HTTPBasicAuth(self.public_key, self.secret_key)
         self.auth = basic_auth
 
     def get_balance(self):
@@ -70,7 +83,7 @@ class RequestBitTeam(Request):
 
         self.status = responce.status_code
         self.data = responce.json()
-        self.file_name = f'BitTeam_balance_{account["name"]}_{dt_now}'
+        self.file_name = f'BitTeam_balance_{self.account_name}_{dt_now}'
 
     def get_balance_compact(self) -> pd.DataFrame:
         """
@@ -87,8 +100,10 @@ class RequestBitTeam(Request):
                 for key_type in data[key_coin].keys():
                     if data[key_coin][key_type] != '0':
                         df.loc[key_coin] = data[key_coin][types[0]], data[key_coin][types[1]], data[key_coin][types[2]]
+                        # df.loc[key_coin] = float(data[key_coin][types[0]]), float(data[key_coin][types[1]]), float(data[key_coin][types[2]])
                         break
         print(df)
+        self.balance = df
 
         # Результат В виде Словаря
         # data_not_zero = {}
@@ -228,11 +243,10 @@ def main():
     # req.get_pair()         # Информация по Торгуемой Паре
 
     # Приватные Запросы ------------------------------------------
-    req.authorization(account)
+    req.authorization(ACCOUNT)
+    # req.get_balance_compact()
 
-    # req.get_balance()
-
-    req.get_balance_compact()
+    # # req.get_balance()
 
     # body_order = {'pairId': '24',  # del_usdt
     #               'side': "sell",
@@ -245,7 +259,7 @@ def main():
 
     # req.cancel_order('101922459')
 
-    # req.cancel_all_orders('24')
+    req.cancel_all_orders('24')
 
     # req.get_orders_of_user()
     # order_types = ('history', 'active', 'closed', 'cancelled', 'all')
@@ -258,7 +272,7 @@ def main():
 # Контроль Результатов -------------------------------------------------
 
     # print(req.__dict__)  # Вывод на экран Атрибутов Экземляра Класса
-    # req.write_data()  # Запись Данных в файл
+    req.write_data()  # Запись Данных в файл
 
 
 if __name__ == '__main__':

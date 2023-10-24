@@ -40,7 +40,7 @@ class RequestXT(Request):
         responce = requests.get(url=end_point)
 
         self.status = responce.status_code
-        self.date = responce.json()
+        self.data = responce.json()
         self.file_name = f'XT_kline_{symbol}_{interval}_{limit}_{dt_now}'
 
 

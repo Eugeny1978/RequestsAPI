@@ -9,7 +9,7 @@ def get_high_low_interval(interval, dump_json=False):
     return (high, low)
 
 def get_highs_lows(dump_json=False) -> pd.DataFrame:
-    intervals = ['4h', '12h', '1d', '3d', '1w']
+
     df = pd.DataFrame(columns=['high', 'low'])
     for i in intervals:
         high, low = get_high_low_interval(i, dump_json=dump_json)
