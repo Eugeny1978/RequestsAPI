@@ -7,7 +7,7 @@ from api.request_bitteam import RequestBitTeam  # Класс запрос по �
 
 
 # Конфигурационные Параметры
-from bots.mm_5intervals.config import PAIR, INTERVALS, ACCOUNT, SECTION_DEPO, RATE_AMOUNT, STEP_PRICE, STEP_AMOUNT, STATUS_RUN
+from bots.mm_5intervals.config_old import PAIR, INTERVALS, ACCOUNT, SECTION_DEPO, RATE_AMOUNT, STEP_PRICE, STEP_AMOUNT, STATUS_RUN
 # Примеры Констант подтягиваемых из Конфигурационного файла
 # PAIR = 'del_usdt' # Торгуемая Пара
 # INTERVALS = ['4h', '12h', '1d', '3d', '1w']

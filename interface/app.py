@@ -1,5 +1,5 @@
 import streamlit as st
-from interface.data_bases.path_to_base import PATH
+from data_bases.path_to_base import PATH
 # from data_bases.path_to_base import PATH as ppp
 
 

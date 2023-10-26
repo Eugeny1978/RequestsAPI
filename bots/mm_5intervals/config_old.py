@@ -13,6 +13,3 @@ STATUS_RUN = True # Статус Запущен или остановлен Ск
 # date['result']['pair']['settings']['lot_size_view_min'] = 6 Знаков после точки
 # date['result']['pair']['settings']['price_view_min'] = 6 Знаков после точки
 # date['result']['pair']['settings']['limit_usd'] = '0.1' str | Минимальный объем эквивалентен
-
-# STEP_AMOUNT = 6 # ШАГ Объемов. Округлять до Знаков после точки
-# STEP_PRICE = 6  # ШАГ Цен. Округлять до Знаков после точки

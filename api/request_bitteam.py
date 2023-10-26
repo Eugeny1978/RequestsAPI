@@ -31,7 +31,6 @@ class RequestBitTeam(Request):
     def get_pair(self, pair='del_usdt'):
         """
         Весь Стакан есть и в запросе "orderbooks". Здесь он обрезан лимитом в 50 слотов
-
         """
         end_point = f'{BASE_URL}/pair/{pair}'
 
@@ -72,17 +71,17 @@ class RequestBitTeam(Request):
         """
         self.info_pairs()
 
-        with sq.connect(PATH) as connect_db:
+        with sq.connect(PATH) as connect:
             # connect_db.row_factory = sq.Row  # Если хотим строки записей в виде dict {}. По умолчанию - кортежи turple ()
-            cursor_db = connect_db.cursor()
+            curs = connect.cursor()
 
-            cursor_db.execute("""CREATE TABLE IF NOT EXISTS pairs
+            curs.execute("""CREATE TABLE IF NOT EXISTS pairs
                 (id INTEGER PRIMARY KEY, name TEXT, baseStep INTEGER, quoteStep INTEGER)""")
 
-            cursor_db.execute("""DELETE FROM pairs""")
+            curs.execute("""DELETE FROM pairs""")
 
             for pair in self.data['result']['pairs']:
-                cursor_db.execute("""
+                curs.execute("""
                     INSERT INTO pairs (id, name, baseStep, quoteStep) 
                     VALUES (:Id, :Name, :BaseStep, :QuoteStep)
                      """, {'Id': pair['id'], 'Name': pair['name'], 'BaseStep': pair['baseStep'],
