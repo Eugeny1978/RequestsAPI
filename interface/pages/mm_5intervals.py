@@ -1,19 +1,44 @@
 import streamlit as st                          # Библиотека Компоновщик Страниц Интерфейся
 import sqlite3 as sq                            # Библиотека  Работа с БД
 import pandas as pd                             # Преобразовать Словари в Таблицы
-import subprocess                               # Запуск внешних скриптов
-import os                                       # ДЛя Остановки Бота
+import subprocess, signal                               # Запуск внешних скриптов
 
 import sys
 sys.path.append('.')
 from data_bases.path_to_base import PATH        # Путь к БД
-from bots.mm_5intervals import config
-# from bots.mm_5intervals import test_print
-
-
 
 # В терминале набрать:
 # streamlit run interface/app.py
+
+# --- СЕРВИСНЫЕ ФУНКЦИИ -------------------------------------------------------
+
+def get_state_bot():
+    """
+    :return: bool
+    """
+    with sq.connect(PATH) as connect:
+        curs = connect.cursor()
+        curs.execute("SELECT state FROM bot_mm_5_intervals ORDER BY rowid DESC")
+        return bool(curs.fetchone()[0])
+
+def set_state_bot(state):
+    """
+    state - любое значение. Если Истина присвоит 1, если Ложь присвоит 0
+    state_int in (1, 0)
+    """
+    state_int = 1 if state else 0
+    with sq.connect(PATH) as connect:
+        curs = connect.cursor()
+        curs.execute("UPDATE bot_mm_5_intervals SET state = :State", {'State': state_int})
+
+def get_bot():
+    return subprocess.Popen("python bots/mm_5intervals/test_bot.py", shell=True)
+    # subprocess.run(["python", "python bots/mm_5intervals/test_bot.py"])
+def cancel_orders_bot():
+    return subprocess.Popen("python bots/mm_5intervals/test_cancel_orders.py", shell=True)
+
+
+# --- КОНЕЦ СЕРВИСНЫХ ФУНКЦИЙ -------------------------------------------------------
 
 # Use the full page instead of a narrow central column
 st.set_page_config(layout="wide")
@@ -37,7 +62,6 @@ with sq.connect(PATH) as connect:
     for account in curs:
         # accounts.loc[len(accounts.index)] = [account['name'], account['exchange'], account['public_key'], account['secret_key']]
         accounts.append((account[0], account[1]))
-
 
 columnA, columnB, columnC = st.columns(3)
 
@@ -83,27 +107,34 @@ except Exception as error:
     print(error.__class__, error)
 
 
-bot = None
+
+
+
 run_options = ('Run', 'Pause', 'Stop')
 run_script = columnB.radio('Сессия Скрипта:', options=run_options, index=2) # on_change=radio_change
-if run_script == 'Run':
-    columnB.write('Скрипт Запущен')
-    if not bot:
-        bot = subprocess.Popen("python bots/mm_5intervals/test_print.py", shell=True)
-        # bot = subprocess.run(["python", "bots/mm_5intervals/test_print.py"])
-elif run_script == 'Pause':
-    columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
-    if bot:
-        bot.terminate()
-else:
-    columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
 
+if run_script == 'Run':
+    if not get_state_bot():
+        get_bot() # Запускаю БОТ
+        set_state_bot(True)
+    columnB.write('Скрипт Запущен')
+elif run_script == 'Pause':
+    if get_state_bot():
+        get_bot().kill() # Останавливаю БОТ
+        # get_bot().send_signal(signal.CTRL_C_EVENT)
+        set_state_bot(False)
+    columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
+else:
+    if get_state_bot():
+        get_bot().kill() # Останавливаю БОТ
+        # get_bot().send_signal(signal.CTRL_C_EVENT)
+        set_state_bot(False)
+        cancel_orders_bot() # Запускаю БОТ, удаляющий Ордера
+    columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
 
 
 columnC.markdown('<h4>Схема Логики Скрипта</h4>', unsafe_allow_html=True)
 columnC.image('interface/media/scheme.png') # caption='Это схема логики'
-
-
 st.markdown("---" ) # разделительная линия
 
 st.text('''
@@ -128,7 +159,5 @@ level_4 = RATE_AMOUNT**4 * X
 BUY  - цены НИЖЕ на Шаг от уровней.
 SELL - цены ВЫШЕ на Шаг от уровней.
 ''')
-
-
 
 

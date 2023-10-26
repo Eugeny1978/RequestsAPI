@@ -35,19 +35,11 @@ columnB.metric('Текущий Результат:', value=result_script)
 st.markdown("---" ) # разделительная линия
 
 st.markdown('<h4>Схема Логики Скрипта</h4>', unsafe_allow_html=True)
-st.image('streamlit/media/scheme.png') # caption='Это схема логики'
+st.image('interface/media/scheme.png') # caption='Это схема логики'
 st.markdown('<h4>Описание Логики Скрипта</h4>', unsafe_allow_html=True)
 st.caption('Звуковые комментарии к Торговой Системе')
-st.audio('streamlit/media/comment.ogg')
+st.audio('interface/media/comment.ogg')
 st.text('''Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
-Здесь будет текст с описанием.
 Здесь будет текст с описанием.
 ''')
 
