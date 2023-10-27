@@ -1,10 +1,10 @@
 import pandas as pd                             # Операции для Таблицы Данных
 from time import sleep                          # Задаю Паузу между циклами выполнения Скрипта
-# import sqlite3 as sq                          # Библиотека  Работа с БД
-# from data_bases.path_to_base import PATH      # Путь к БД
+import sqlite3 as sq                            # Библиотека  Работа с БД
+
+from data_bases.path_to_base import PATH        # Путь к БД
 from api.request_xt import RequestXT            # Класс запрос по получению Уровней (Биржа XT)
 from api.request_bitteam import RequestBitTeam  # Класс запрос по получению Объемов и выставления Ордеров (BitTeam)
-
 
 # Конфигурационные Параметры
 from bots.mm_5intervals.config_old import PAIR, INTERVALS, ACCOUNT, SECTION_DEPO, RATE_AMOUNT, STEP_PRICE, STEP_AMOUNT, STATUS_RUN
@@ -92,22 +92,44 @@ class MM_5Levels(RequestXT, RequestBitTeam):
                     }
             print(f'SELL Limit {PAIR}: {body}')
             self.create_order(body=body)
+def is_run_bot():
+    with sq.connect(PATH) as connect:
+        curs = connect.cursor()
+        curs.execute("SELECT state FROM bot_mm_5_intervals ORDER BY rowid DESC")
+        return bool(curs.fetchone()[0])
 
-# ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
-def main():
-    while STATUS_RUN:
-        strategy = MM_5Levels()         # Создаю Объект Стратегию
-        strategy.authorization(ACCOUNT) # Авторизируюсь
 
-        # Перед расчетом Объемов Удаляю Все Активные Ордера по этой паре
-        strategy.get_pair(pair=PAIR)
-        pairId = strategy.data['result']['pair']['id']
-        strategy.cancel_all_orders(pairId=pairId)
+# --- RUN_BOT ----------------------------------------------------------------------------
+while is_run_bot():
+    strategy = MM_5Levels()         # Создаю Объект Стратегию
+    strategy.authorization(ACCOUNT) # Авторизируюсь
 
-        strategy.get_levels()           # Определяю Уровни на которых буду ставить Ордера на Пару
-        strategy.get_amounts()          # Определяю Объемы (Размеры) Ордеров по Паре
-        strategy.create_my_orders()     # Выставляю Ордера (предварительно удаляю все Активные Ордера по Паре)
-        sleep(2*60*60) # Перерасчет Каждые 2 часа
+    # Перед расчетом Объемов Удаляю Все Активные Ордера по этой паре
+    strategy.get_pair(pair=PAIR)
+    pairId = strategy.data['result']['pair']['id']
+    strategy.cancel_all_orders(pairId=pairId)
 
-if __name__ == '__main__':
-    main()
+    strategy.get_levels()           # Определяю Уровни на которых буду ставить Ордера на Пару
+    strategy.get_amounts()          # Определяю Объемы (Размеры) Ордеров по Паре
+    strategy.create_my_orders()     # Выставляю Ордера (предварительно удаляю все Активные Ордера по Паре)
+    sleep(2*60*60) # Перерасчет Каждые 2 часа
+
+# --- END RUN_BOT ----------------------------------------------------------------------------
+
+# # ---- # Конструкция для выполнения кода из этого файла -----------------------------------------
+# def main():
+#     strategy = MM_5Levels()         # Создаю Объект Стратегию
+#     strategy.authorization(ACCOUNT) # Авторизируюсь
+#
+#     # Перед расчетом Объемов Удаляю Все Активные Ордера по этой паре
+#     strategy.get_pair(pair=PAIR)
+#     pairId = strategy.data['result']['pair']['id']
+#     strategy.cancel_all_orders(pairId=pairId)
+#
+#     strategy.get_levels()           # Определяю Уровни на которых буду ставить Ордера на Пару
+#     strategy.get_amounts()          # Определяю Объемы (Размеры) Ордеров по Паре
+#     strategy.create_my_orders()     # Выставляю Ордера (предварительно удаляю все Активные Ордера по Паре)
+#     sleep(2*60*60) # Перерасчет Каждые 2 часа
+#
+# if __name__ == '__main__':
+#     main()

@@ -1,11 +1,12 @@
 import streamlit as st                          # Библиотека Компоновщик Страниц Интерфейся
 import sqlite3 as sq                            # Библиотека  Работа с БД
 import pandas as pd                             # Преобразовать Словари в Таблицы
-import subprocess, signal                               # Запуск внешних скриптов
+import subprocess, os, signal                   # Запуск внешних скриптов
 
 import sys
 sys.path.append('.')
 from data_bases.path_to_base import PATH        # Путь к БД
+
 
 # В терминале набрать:
 # streamlit run interface/app.py
@@ -31,11 +32,32 @@ def set_state_bot(state):
         curs = connect.cursor()
         curs.execute("UPDATE bot_mm_5_intervals SET state = :State", {'State': state_int})
 
-def get_bot():
-    return subprocess.Popen("python bots/mm_5intervals/test_bot.py", shell=True)
-    # subprocess.run(["python", "python bots/mm_5intervals/test_bot.py"])
+def run_bot():
+    # cmd = "python bots/mm_5intervals/test_bot.py"
+    cmd = "python bots/mm_5intervals/ts.py"
+    bot = subprocess.Popen(cmd)
+    set_bot_pid(bot.pid)
+
+def kill_bot(pid):
+    os.kill(pid, signal.SIGTERM)
+
+def set_bot_pid(pid):
+    with sq.connect(PATH) as connect:
+        curs = connect.cursor()
+        curs.execute("UPDATE bot_mm_5_intervals SET pid = :Pid", {'Pid': pid})
+        print(pid)
+
+def get_bot_pid():
+    with sq.connect(PATH) as connect:
+        curs = connect.cursor()
+        curs.execute("SELECT pid FROM bot_mm_5_intervals ORDER BY rowid DESC")
+        return curs.fetchone()[0]
+
 def cancel_orders_bot():
-    return subprocess.Popen("python bots/mm_5intervals/test_cancel_orders.py", shell=True)
+    # cmd = "python bots/mm_5intervals/test_cancel_orders.py"
+    cmd = "python bots/mm_5intervals/cancel_orders.py"
+    subprocess.Popen(cmd)
+
 
 
 # --- КОНЕЦ СЕРВИСНЫХ ФУНКЦИЙ -------------------------------------------------------
@@ -106,30 +128,24 @@ try:
 except Exception as error:
     print(error.__class__, error)
 
-
-
-
-
 run_options = ('Run', 'Pause', 'Stop')
 run_script = columnB.radio('Сессия Скрипта:', options=run_options, index=2) # on_change=radio_change
 
 if run_script == 'Run':
     if not get_state_bot():
-        get_bot() # Запускаю БОТ
+        run_bot() # Запускаю БОТ
         set_state_bot(True)
     columnB.write('Скрипт Запущен')
 elif run_script == 'Pause':
     if get_state_bot():
-        get_bot().kill() # Останавливаю БОТ
-        # get_bot().send_signal(signal.CTRL_C_EVENT)
+        kill_bot(get_bot_pid()) # Останавливаю БОТ
         set_state_bot(False)
     columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
 else:
     if get_state_bot():
-        get_bot().kill() # Останавливаю БОТ
-        # get_bot().send_signal(signal.CTRL_C_EVENT)
+        kill_bot(get_bot_pid()) # Останавливаю БОТ
         set_state_bot(False)
-        cancel_orders_bot() # Запускаю БОТ, удаляющий Ордера
+    cancel_orders_bot()  # Запускаю БОТ, удаляющий Ордера
     columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
 
 
@@ -155,7 +171,7 @@ level_4 = RATE_AMOUNT**4 * X
 Если задать RATE_AMOUNT < 1 - то каждый следующий уровень будет иметь менее массивный объем (снижение объема)
 Если задать RATE_AMOUNT = 1 - объем распределится равномерно по уровням
 
-3. Выставляются ордера. С корректировкой (сдвигом) Уровней на Указаннный в конфиг. файле Шаг для 
+3. Выставляются ордера. С корректировкой (сдвигом) Уровней на Указаннный в конфигурационном файле Шаг для 
 BUY  - цены НИЖЕ на Шаг от уровней.
 SELL - цены ВЫШЕ на Шаг от уровней.
 ''')
