@@ -33,9 +33,9 @@ def set_state_bot(state):
         curs.execute("UPDATE bot_mm_5_intervals SET state = :State", {'State': state_int})
 
 def run_bot():
-    # cmd = "python bots/mm_5intervals/test_bot.py"
-    cmd = "python bots/mm_5intervals/ts.py"
-    bot = subprocess.Popen(cmd)
+    cmd = "python bots/mm_5intervals/test_bot.py"
+    # cmd = "python bots/mm_5intervals/ts.py"
+    bot = subprocess.Popen(cmd, shell=True)
     set_bot_pid(bot.pid)
 
 def kill_bot(pid):
@@ -54,9 +54,9 @@ def get_bot_pid():
         return curs.fetchone()[0]
 
 def cancel_orders_bot():
-    # cmd = "python bots/mm_5intervals/test_cancel_orders.py"
-    cmd = "python bots/mm_5intervals/cancel_orders.py"
-    subprocess.Popen(cmd)
+    cmd = "python bots/mm_5intervals/test_cancel_orders.py"
+    # cmd = "python bots/mm_5intervals/cancel_orders.py"
+    subprocess.Popen(cmd, shell=True)
 
 
 
@@ -121,6 +121,27 @@ STATUS_RUN = True # Статус Запущен или остановлен Ск
     except Exception as error:
         print(error.__class__, error)
 
+def radio_change():
+    run_radio = st.session_state.radio_button
+    st.write(run_radio)
+    if run_radio == 'Run':
+        st.write(get_state_bot())
+        if not get_state_bot():
+            run_bot() # Запускаю БОТ
+            set_state_bot(True)
+        columnB.write('Скрипт Запущен')
+    elif run_radio == 'Pause':
+        if get_state_bot():
+            kill_bot(get_bot_pid()) # Останавливаю БОТ
+            set_state_bot(False)
+        columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
+    elif run_radio == 'Stop':
+        if get_state_bot():
+            kill_bot(get_bot_pid()) # Останавливаю БОТ
+            set_state_bot(False)
+        cancel_orders_bot()  # Запускаю БОТ, удаляющий Ордера
+        columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
+
 dump_config = columnB.button('Записать Выбранные Параметры в Конфигурационный Файл', on_click=dump_parameters)
 try:
     df = pd.read_csv('df.csv')
@@ -129,25 +150,24 @@ except Exception as error:
     print(error.__class__, error)
 
 run_options = ('Run', 'Pause', 'Stop')
-run_script = columnB.radio('Сессия Скрипта:', options=run_options, index=2) # on_change=radio_change
+run_script = columnB.radio('Сессия Скрипта:', options=run_options, index=None, key='radio_button', on_change=radio_change) # on_change=radio_change , key='RRR'
 
-if run_script == 'Run':
-    if not get_state_bot():
-        run_bot() # Запускаю БОТ
-        set_state_bot(True)
-    columnB.write('Скрипт Запущен')
-elif run_script == 'Pause':
-    if get_state_bot():
-        kill_bot(get_bot_pid()) # Останавливаю БОТ
-        set_state_bot(False)
-    columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
-else:
-    if get_state_bot():
-        kill_bot(get_bot_pid()) # Останавливаю БОТ
-        set_state_bot(False)
-    cancel_orders_bot()  # Запускаю БОТ, удаляющий Ордера
-    columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
-
+# if run_script == 'Run':
+#     if not get_state_bot():
+#         run_bot() # Запускаю БОТ
+#         set_state_bot(True)
+#     columnB.write('Скрипт Запущен')
+# elif run_script == 'Pause':
+#     if get_state_bot():
+#         kill_bot(get_bot_pid()) # Останавливаю БОТ
+#         set_state_bot(False)
+#     columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
+# elif run_script == 'Stop':
+#     if get_state_bot():
+#         kill_bot(get_bot_pid()) # Останавливаю БОТ
+#         set_state_bot(False)
+#     cancel_orders_bot()  # Запускаю БОТ, удаляющий Ордера
+#     columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
 
 columnC.markdown('<h4>Схема Логики Скрипта</h4>', unsafe_allow_html=True)
 columnC.image('interface/media/scheme.png') # caption='Это схема логики'
