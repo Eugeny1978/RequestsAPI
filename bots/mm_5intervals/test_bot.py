@@ -1,3 +1,6 @@
+import sys
+sys.path.append('.')
+
 from api.request_bitteam import RequestBitTeam  # Класс запросы (BitTeam)
 from bots.mm_5intervals.config_old import PAIR, ACCOUNT # Конфигурационные Параметры
 aaa = PAIR

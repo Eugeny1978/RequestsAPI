@@ -2,12 +2,14 @@ import pandas as pd                             # Операции для Таб
 from time import sleep                          # Задаю Паузу между циклами выполнения Скрипта
 import sqlite3 as sq                            # Библиотека  Работа с БД
 
+import sys
+sys.path.append('.')
 from data_bases.path_to_base import PATH        # Путь к БД
 from api.request_xt import RequestXT            # Класс запрос по получению Уровней (Биржа XT)
 from api.request_bitteam import RequestBitTeam  # Класс запрос по получению Объемов и выставления Ордеров (BitTeam)
 
 # Конфигурационные Параметры
-from bots.mm_5intervals.config_old import PAIR, INTERVALS, ACCOUNT, SECTION_DEPO, RATE_AMOUNT, STEP_PRICE, STEP_AMOUNT, STATUS_RUN
+from bots.mm_5intervals.config import PAIR, INTERVALS, ACCOUNT, SECTION_DEPO, RATE_AMOUNT, STEP_PRICE, STEP_AMOUNT, STATUS_RUN
 # Примеры Констант подтягиваемых из Конфигурационного файла
 # PAIR = 'del_usdt' # Торгуемая Пара
 # INTERVALS = ['4h', '12h', '1d', '3d', '1w']

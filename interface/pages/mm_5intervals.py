@@ -2,6 +2,7 @@ import streamlit as st                          # Библиотека Комп�
 import sqlite3 as sq                            # Библиотека  Работа с БД
 import pandas as pd                             # Преобразовать Словари в Таблицы
 import subprocess, os, signal                   # Запуск внешних скриптов
+import psutil                                   # Инфо и Управление запущенными процессами
 
 import sys
 sys.path.append('.')
@@ -37,9 +38,27 @@ def run_bot():
     # cmd = "python bots/mm_5intervals/ts.py"
     bot = subprocess.Popen(cmd, shell=True)
     set_bot_pid(bot.pid)
+    # cmd = "python bots/mm_5intervals/test_bot.py"
+    # temp_cwd = 'F:\! PYTON\PyCharm\RequestsAPI'
+    # bot = subprocess.Popen(cmd, cwd=temp_cwd, shell=True)
+    # set_bot_pid(bot.pid)
+
 
 def kill_bot(pid):
-    os.kill(pid, signal.SIGTERM)
+    '''Kills parent and children processes'''
+    parent = psutil.Process(pid)
+    # --- kill all the child processes
+    for child in parent.children(recursive=True):
+        # print(f'child: {child}')
+        child.kill()
+        # В моем случае Не нужно Автоматически уничтожается при удалении Дочерних Процессов.
+        # Соответственно вызовет Ошибку прр попытке
+        # --- kill the parent process
+        # print(f'parent: {parent}')
+        # parent.kill()
+    # Вариант Удаления Используя библиотеку os
+    # os.kill(pid, signal.SIGTERM)
+    print('Процесс Прерван!')
 
 def set_bot_pid(pid):
     with sq.connect(PATH) as connect:
@@ -123,7 +142,6 @@ STATUS_RUN = True # Статус Запущен или остановлен Ск
 
 def radio_change():
     run_radio = st.session_state.radio_button
-    st.write(run_radio)
     if run_radio == 'Run':
         st.write(get_state_bot())
         if not get_state_bot():
@@ -150,7 +168,13 @@ except Exception as error:
     print(error.__class__, error)
 
 run_options = ('Run', 'Pause', 'Stop')
-run_script = columnB.radio('Сессия Скрипта:', options=run_options, index=None, key='radio_button', on_change=radio_change) # on_change=radio_change , key='RRR'
+run_script = columnB.radio('Сессия Скрипта:', options=run_options, index=None, key='radio_button', on_change=radio_change) #
+if run_script == 'Run':
+    columnB.write('Скрипт Запущен')
+elif run_script == 'Pause':
+    columnB.write('Скрипт на Паузе (Выставленные Ордера Активны (не удалены)')
+elif run_script == 'Stop':
+    columnB.write('Скрипт Остановлен. (Выставленные Ордера Удалены)')
 
 # if run_script == 'Run':
 #     if not get_state_bot():

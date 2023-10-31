@@ -1,6 +1,7 @@
 import os
 import signal
 import subprocess                               # Запуск внешних скриптов
+import psutil                                   # Инфо и Управление запущенными процессами
 import sqlite3 as sq                            # Библиотека  Работа с БД
 from time import sleep
 from data_bases.path_to_base import PATH
@@ -20,15 +21,62 @@ env_pyton = my_env['PYTHONPATH']
 #     set_bot_pid(bot.pid)
 
 def run_bot():
-    cmd = "python ../bots/mm_5intervals/test_bot.py"
-    bot = subprocess.Popen(cmd, env=my_env) # , stdout=subprocess.PIPE, shell=True, env=env_pyton, env=my_env,
-    # stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    # cmd = "python ../bots/mm_5intervals/test_bot.py"
+    # bot = subprocess.Popen(cmd, shell=True, close_fds=True) # , stdout=subprocess.PIPE, shell=True, env=env_pyton, env=my_env start_new_session=True cwd: # stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    cmd = "python test_bot.py"
+    temp_cwd = '../bots/mm_5intervals/'
+    bot = subprocess.Popen(cmd, cwd=temp_cwd, shell=True)  # , start_new_session=True
     set_bot_pid(bot.pid)
+    # aaa = os.getpgid(bot.pid)
+    # print(aaa)
 
-def kill_bot(pid): #
-    os.kill(pid, signal.SIGTERM) #  SIGSTOP SIGKILL SIG_BLOCK SIGCHLD SIGCLD SIGPIPE CTRL_C_EVENT CTRL_BREAK_EVENT
-    # Отрабатывают: SIGABRT SIGTERM SIGBREAK SIGINT
-    # os.kill(pid, 0)
+
+# def kill_bot(pid): #
+#     os.kill(pid, signal.SIGINT)
+#     # Отрабатывают: SIGABRT SIGTERM SIGBREAK SIGINT
+#     # НЕ отрабатывают: SIGSTOP SIGKILL SIG_BLOCK SIGCHLD SIGCLD SIGPIPE CTRL_C_EVENT CTRL_BREAK_EVENT
+#     print('Процесс Прерван!')
+
+
+def kill_bot(pid):
+    '''Kills parent and children processes'''
+    parent = psutil.Process(pid)
+    # --- kill all the child processes
+    for child in parent.children(recursive=True):
+        # print(f'child: {child}')
+        child.kill()
+        # --- kill the parent process
+        # print(f'parent: {parent}')
+        # parent.kill()
+    # В моем случае Не нужно Автоматически уничтожается при удалении Дочерних Процессов.
+    # Соответственно вызовет Ошибку прр попытке
+    # os.kill(pid, signal.SIGTERM)
+    # # Отрабатывают: SIGABRT SIGTERM SIGBREAK SIGINT
+    # # НЕ отрабатывают: SIGSTOP SIGKILL SIG_BLOCK SIGCHLD SIGCLD SIGPIPE CTRL_C_EVENT CTRL_BREAK_EVENT
+    print('Процесс Прерван!')
+
+# def kill_processes(pid):
+#     '''Kills parent and children processess'''
+#     parent = psutil.Process(pid)
+#     # kill all the child processes
+#     for child in parent.children(recursive=True):
+#         print(child)
+#         child.kill()
+#         # kill the parent process
+#         print(parent)
+#         parent.kill()
+#
+# # remember to assign subprocess to a variable
+# pro = subprocess.Popen("python3 write_to_file.py", stdout=subprocess.PIPE,
+#                        shell=True, start_new_session=True)
+#
+# # get the process id
+# print("Process ID:", pro.pid)
+#
+# # call function to kill all processes in a group
+# kill_processes(pro.pid)
+
+
 
 def set_bot_pid(pid):
     with sq.connect(PATH) as connect:
@@ -43,97 +91,26 @@ def get_bot_pid():
         return curs.fetchone()[0]
 def cancel_orders_bot():
     cmd = "python ../bots/mm_5intervals/test_cancel_orders.py"
-    subprocess.Popen(cmd)
-
-print('ПРАВИЛЬНО! ----------------')
-run_bot()
-sleep(5)
-print(get_bot_pid())
-kill_bot(get_bot_pid())
-print('Процесс Прерван!')
-
-run_bot()
-sleep(5)
-kill_bot(get_bot_pid())
-print('Процесс Прерван!')
+    subprocess.Popen(cmd, shell=True)
 
 
 
-# НЕПРАВИЛЬНО!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# print('НЕПРАВИЛЬНО! ----------------')
-# bot1 = get_bot()
-# pid_1 = bot1.pid
-# sleep(7)
-# bot1.kill()
-# print('Процесс Прерван!')
-#
-# bot2 = get_bot()
-# pid_2 = bot2.pid
-# sleep(7)
-# bot1.kill()
-# print('Процесс Прерван!')
-# # os.kill(pid_1, signal.SIGTERM)
-# # os.kill(pid_2, signal.SIGTERM)
-
-# print('ПРАВИЛЬНО! ----------------')
-# cmd = "python ../bots/mm_5intervals/test_bot.py"
-# bot3 = subprocess.Popen(cmd)
-# pid_3 = bot3.pid
-# print(type(pid_3))
-# sleep(7)
-# os.kill(pid_3, signal.SIGTERM)
-# print('Процесс Прерван!')
-#
-# bot4 = subprocess.Popen(cmd)
-# pid_4 = bot4.pid
-# sleep(7)
-# os.kill(pid_4, signal.SIGTERM)
-# print('Процесс Прерван!')
-#
-# bot5 = subprocess.Popen(cmd)
-# pid_5 = bot5.pid
-# sleep(7)
-# os.kill(pid_5, signal.SIGTERM)
-# print('Процесс Прерван!')
-
-# print('ПРАВИЛЬНО! ----------------')
-# cmd = "python ../bots/mm_5intervals/test_bot.py"
-# bot = subprocess.Popen(cmd)
-# sleep(7)
-# bot.terminate()
-# print('Процесс Прерван!')
-#
-# bot = subprocess.Popen(cmd)
-# sleep(7)
-# bot.terminate()
-# print('Процесс Прерван!')
-
-
-# print('ПРАВИЛЬНО! ----------------')
-# bot = run_bot()
-# sleep(7)
-# os.kill(get_bot_pid(), signal.SIGTERM)
-# print('Процесс Прерван!')
-#
-# bot = run_bot()
-# sleep(7)
-# os.kill(get_bot_pid(), signal.SIGTERM)
-# print('Процесс Прерван!')
-
-# print('ПРАВИЛЬНО! ----------------')
-# bot = run_bot()
-# sleep(7)
-# bot.terminate()
-# print('Процесс Прерван!')
-#
-# bot = run_bot()
-# sleep(7)
-# bot.terminate()
-# print('Процесс Прерван!')
 
 # # ---- # Конструкция для выполнения кода ТОЛЬКО из этого файла -----------------------------------------
 def main():
-    pass
+    run_bot()
+    sleep(5)
+    # kill_bot(get_bot_pid())
+    kill_bot(get_bot_pid())
+
+
+    run_bot()
+    sleep(5)
+    # kill_bot(get_bot_pid())
+    kill_bot(get_bot_pid())
+
+# -----------------------------------
+
 
 if __name__ == '__main__':
     main()
