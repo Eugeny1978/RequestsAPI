@@ -20,7 +20,7 @@ def get_state_bot():
     """
     with sq.connect(PATH) as connect:
         curs = connect.cursor()
-        curs.execute("SELECT state FROM bot_mm_5_intervals ORDER BY rowid DESC")
+        curs.execute("SELECT state FROM bot_mm_5_intervals_db ORDER BY rowid DESC")
         return bool(curs.fetchone()[0])
 
 def set_state_bot(state):
@@ -31,18 +31,13 @@ def set_state_bot(state):
     state_int = 1 if state else 0
     with sq.connect(PATH) as connect:
         curs = connect.cursor()
-        curs.execute("UPDATE bot_mm_5_intervals SET state = :State", {'State': state_int})
+        curs.execute("UPDATE bot_mm_5_intervals_db SET state = :State", {'State': state_int})
 
 def run_bot():
-    # cmd = "python bots/mm_5intervals/test_bot.py"
-    cmd = "python bots/mm_5intervals/bot.py"
+    # cmd = "python bots/mm_5_intervals_db/test_bot.py"
+    cmd = "python bots/mm_5_intervals_db/bot.py"
     bot = subprocess.Popen(cmd, shell=True)
     set_bot_pid(bot.pid)
-    # cmd = "python bots/mm_5intervals/test_bot.py"
-    # temp_cwd = 'F:\! PYTON\PyCharm\RequestsAPI'
-    # bot = subprocess.Popen(cmd, cwd=temp_cwd, shell=True)
-    # set_bot_pid(bot.pid)
-
 
 def kill_bot(pid):
     '''Kills parent and children processes'''
@@ -63,33 +58,29 @@ def kill_bot(pid):
 def set_bot_pid(pid):
     with sq.connect(PATH) as connect:
         curs = connect.cursor()
-        curs.execute("UPDATE bot_mm_5_intervals SET pid = :Pid", {'Pid': pid})
+        curs.execute("UPDATE bot_mm_5_intervals_db SET pid = :Pid", {'Pid': pid})
         print(pid)
 
 def get_bot_pid():
     with sq.connect(PATH) as connect:
         curs = connect.cursor()
-        curs.execute("SELECT pid FROM bot_mm_5_intervals ORDER BY rowid DESC")
+        curs.execute("SELECT pid FROM bot_mm_5_intervals_db ORDER BY rowid DESC")
         return curs.fetchone()[0]
 
 def cancel_orders_bot():
-    # cmd = "python bots/mm_5intervals/test_cancel_orders.py"
-    cmd = "python bots/mm_5intervals/cancel_orders.py"
+    # cmd = "python bots/mm_5_intervals_db/test_cancel_orders.py"
+    cmd = "python bots/mm_5_intervals_db/cancel_orders.py"
     subprocess.Popen(cmd, shell=True)
-
 
 
 # --- КОНЕЦ СЕРВИСНЫХ ФУНКЦИЙ -------------------------------------------------------
 
 # Use the full page instead of a narrow central column
 st.set_page_config(layout="wide")
-# st.title('Торговая система: Маркет Мейкинг: 5 Уровней')
-st.subheader('Торговая система: Маркет Мейкинг: 5 Уровней')
+st.subheader('Торговая система: Маркет Мейкинг: 5 Уровней (Работа только со своими Ордерами)')
 st.markdown("---" ) # разделительная линия
 
-# PATH = "F:/! PYTON/PyCharm/RequestsAPI/data_bases/base.db"
 with sq.connect(PATH) as connect:
-    # connect.row_factory = sq.Row  # Если хотим строки записей в виде dict {}. По умолчанию - кортежи turple ()
     curs = connect.cursor()
 
     curs.execute("""SELECT name FROM pairs ORDER BY name""")
@@ -98,10 +89,8 @@ with sq.connect(PATH) as connect:
         pairs.append(pair[0]) # 'name'
 
     curs.execute("""SELECT * FROM trade_api ORDER BY name""")
-    # accounts = pd.DataFrame(columns=['name', 'exchange', 'public_key', 'secret_key'])
     accounts = []
     for account in curs:
-        # accounts.loc[len(accounts.index)] = [account['name'], account['exchange'], account['public_key'], account['secret_key']]
         accounts.append((account[0], account[1]))
 
 columnA, columnB, columnC = st.columns(3)
@@ -114,7 +103,7 @@ section_depo = columnA.slider('Торгуемый Объем (% от Средс�
 
 def dump_parameters():
     try:
-        with open('bots/mm_5intervals/config.py', "w+", encoding='utf-8') as file:
+        with open('bots/mm_5_intervals_db/config.py', "w+", encoding='utf-8') as file:
             constant_text = f"""# Настраиваемые Параметры -----------------------------
 ACCOUNT = {dict_account}      # Торговый Акканут
 PAIR = '{pair}'               # Торгуемая Пара
@@ -194,5 +183,3 @@ level_4 = RATE_AMOUNT**4 * X
 BUY  - цены НИЖЕ на Шаг от уровней.
 SELL - цены ВЫШЕ на Шаг от уровней.
 ''')
-
-
