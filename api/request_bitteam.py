@@ -169,7 +169,8 @@ class RequestBitTeam(Request):
             file_name = f'BitTeam_create_order_{self.data["result"]["pair"]}_{body["side"]}_{body["type"]}_{body["amount"]}_{body["price"]}_{self.data["result"]["id"]}'
             print(f'BitTeam. Создан Ордер ID: {self.data["result"]["id"]}')
         else:
-            file_name = f'BitTeam_DONT_create_order_{body["PairId"]}_{body["side"]}_{body["type"]}_{body["amount"]}_{body["price"]}'
+            file_name = f'BitTeam_DONT_create_order_{body["pairId"]}_{body["side"]}_{body["type"]}_{body["amount"]}_{body["price"]}'
+            print(self.data)
         self.file_name = file_name
 
 

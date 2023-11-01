@@ -34,8 +34,8 @@ def set_state_bot(state):
         curs.execute("UPDATE bot_mm_5_intervals SET state = :State", {'State': state_int})
 
 def run_bot():
-    cmd = "python bots/mm_5intervals/test_bot.py"
-    # cmd = "python bots/mm_5intervals/ts.py"
+    # cmd = "python bots/mm_5intervals/test_bot.py"
+    cmd = "python bots/mm_5intervals/ts.py"
     bot = subprocess.Popen(cmd, shell=True)
     set_bot_pid(bot.pid)
     # cmd = "python bots/mm_5intervals/test_bot.py"
@@ -73,8 +73,8 @@ def get_bot_pid():
         return curs.fetchone()[0]
 
 def cancel_orders_bot():
-    cmd = "python bots/mm_5intervals/test_cancel_orders.py"
-    # cmd = "python bots/mm_5intervals/cancel_orders.py"
+    # cmd = "python bots/mm_5intervals/test_cancel_orders.py"
+    cmd = "python bots/mm_5intervals/cancel_orders.py"
     subprocess.Popen(cmd, shell=True)
 
 
@@ -161,7 +161,7 @@ def radio_change():
 dump_config = columnB.button('Записать Выбранные Параметры в Конфигурационный Файл', on_click=dump_parameters)
 try:
     df = pd.read_csv('df.csv')
-    columnB.dataframe(df, hide_index=True)
+    columnB.dataframe(df, hide_index=True, use_container_width=True)
 except Exception as error:
     print(error.__class__, error)
 

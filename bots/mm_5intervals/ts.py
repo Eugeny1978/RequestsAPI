@@ -73,11 +73,12 @@ class MM_5Levels(RequestXT, RequestBitTeam):
 
         # BUY ORDERS
         for i in self.levels.index:
+            price = round(self.levels.at[i, 'low'] + 10**(-STEP_PRICE), STEP_PRICE) # (price in base coin (usdt))
             body = {'pairId': str(pairId),  # '44' farms_usdt, '24' del_usdt
                     'side': 'buy',  # "buy", "sell"
                     'type': 'limit',
-                    'amount': round(self.levels.at[i, self.coins[0]], STEP_AMOUNT), # (value in coin1 (del))
-                    'price': round(self.levels.at[i, 'low'] + 10**(-STEP_PRICE), STEP_PRICE) # (price in base coin (usdt))
+                    'amount': round(self.levels.at[i, self.coins[1]] / price, STEP_AMOUNT), # (value in coin1 (del))
+                    'price': price # (price in base coin (usdt))
                     }
             print(f'BUY Limit {PAIR}: {body}')
             self.create_order(body=body)
@@ -87,7 +88,7 @@ class MM_5Levels(RequestXT, RequestBitTeam):
             body = {'pairId': str(pairId),  # '44' farms_usdt, '24' del_usdt
                     'side': 'sell',  # "buy", "sell"
                     'type': 'limit',
-                    'amount': round((self.levels.at[i, self.coins[1]] / price), STEP_AMOUNT), # (value in coin1 (del))
+                    'amount': round((self.levels.at[i, self.coins[0]]), STEP_AMOUNT), # (value in coin1 (del))
                     'price': price  # # (price in base coin (usdt))
                     }
             print(f'SELL Limit {PAIR}: {body}')
